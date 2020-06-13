@@ -1,0 +1,1425 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://static.sekandocdn.net/static/feednami/feednami-client-v1.1.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+        <script>
+            // ["title", "title_detail", "links"
+            // , "link", "summary", "summary_detail",
+            //  "published", "published_parsed", "id", "guidislink"]
+            var isdone = 'False';
+            var allnews = []
+            document.addEventListener('DOMContentLoaded', function() {
+                var n = '{{ num }}';
+                var p = '{{ preference }}';
+                var x = 100/(n/2)
+                p = p.split(',');
+                getnews(p);
+                const news = document.querySelector('#news');
+                for (var i = 0; i < parseInt(n); i++) {
+                    const d = document.createElement('div');
+                    d.className = `col-sm-${n} column ${p[i]}`
+                    const header = document.createElement('div');
+                    header.className = 'dashhead';
+                    header.innerHTML = p[i];
+                    d.style.height = `${x}%`;
+                    if (n === '2') {
+                        d.style.width = '50%'
+                    }
+                    else if (n === '3') {
+                        news.style.width = '108%'
+                        news.style.right = '-270px'
+                        header.style.left = '20%'
+                        document.querySelector('#extraimg').style.right = '90px';
+                    }
+                    else if (n === '1') {
+                        d.style.height = `100%`;
+                        d.style.width = '100%'
+                        header.style.left = '40%'
+                    }
+                    else if (n === '4') {
+                        header.style.left = '20%'
+                    }
+                    else if (n === '5') {
+                        document.querySelector('#extraimg').style.right = '195px';
+                    }
+                    else if (n === '6') {
+                    }
+                    d.append(header);
+                    news.append(d);
+                }
+                plist = ['Sports', 'Business', 'Politics', 'Economics', 'Celebrities', 'Technology'];
+                allnews = [];
+                for (var j = 0; j < plist.length; j++) {
+                    allnews.push(plist[j]);
+                }
+                var feeds = {{ feeds|safe }}
+                var newsfordash = [];
+                for (var i = 0; i < feeds.length; i++) {
+                    var li = feeds[i];
+                    var sec = li[0];
+                    for (var j = 0; j < plist.length; j++) {
+                        if (plist[j] === sec) {
+                            for (var k = 0; k < feeds.length; k++) {
+                                var li2 = feeds[k];
+                                if (li2[0] === sec) {
+                                    var sec2 = JSON.parse(JSON.stringify(li2[0]));
+                                    var sec3 = JSON.parse(JSON.stringify(sec2));
+                                    for (var l = 1; l < li2.length; l++) {
+                                        const url = li2[l];
+                                        var newsplacedash = JSON.parse(JSON.stringify(plist));
+                                        const sector = JSON.parse(JSON.stringify(sec3));
+                                        load(url, sector, newsplacedash, 'dashboard', function(data) {
+                                            newsfordash.push(data);
+                                            newsplacedash = []
+                                            for (var j = 0; j < plist.length; j++) {
+                                                newsplacedash.push(plist[j]);
+                                            }
+                                            if (newsfordash.length == plist.length) {
+                                                var othernews = []
+                                                for (var j = 0; j < newsfordash.length; j++) {
+                                                    var comparr = newsfordash[j];
+                                                    for (var k = 0; k < comparr.length; k++) {
+                                                        if (typeof(comparr[k]) === 'object') {
+                                                            othernews.push(comparr[k]);
+                                                        }
+                                                    }
+                                                } 
+                                                allnews = JSON.parse(JSON.stringify(othernews));
+                                                console.log(allnews);
+                                                for (var i = 0; i < allnews.length; i++) {
+                                                    var item = allnews[i];
+                                                    var sec = item[0];
+                                                    var array = item[1];
+                                                    for (var j = 0; j < array.length; j++) {
+                                                        array[j]['sector'] = sec;
+                                                        array[j]['keywords'] = [sec];
+                                                        const div = document.createElement('div');
+                                                        var title = array[j]['title'];
+                                                        var summary = array[j]['summary'];
+                                                        div.append(title);
+                                                        div.append(summary);
+                                                        var alltext = div.innerHTML;
+                                                        alltext = alltext.split(' ');
+                                                        for (var k = 0; k < alltext.length; k++) {
+                                                            array[j]['keywords'].push(alltext[k])
+                                                        }
+                                                            //console.log(alltext);
+                                                    }
+                                                        // for (var j = 0; j < array.length; j++) {
+                                                        //     console.log(array[j]['keywords'])
+                                                        // }
+                                                }
+                                                document.querySelector('#demo-2').style.display = 'block';
+                                            }
+                                        });
+                                        // allnews = load(url, allnews, sec);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } 
+                document.querySelector('#searchbar').onkeyup = function() {
+                    var input = document.querySelector('#searchbar').value;
+                    input = input.split(' ')
+                    newstoshow = [];
+                    for (var l = 0; l < input.length; l++) {
+                        newinput = input[l].trim();
+                        for (var i = 0; i < allnews.length; i++) {
+                            var item = allnews[i];
+                            var array = item[1];
+                            for (var k = 0; k < array.length; k++) {
+                                //console.log(array[0]['keywords']);
+                                var keywords = array[k]['keywords'];
+                                //console.log(keywords);
+                                for (var j = 0; j < keywords.length; j++) {
+                                    var word = keywords[j];
+                                    //console.log(word,input);
+                                    if (word.toLowerCase() === newinput.toLowerCase()) {
+                                        //console.log(word,input);
+                                        newstoshow.push(array[k]);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    const newdiv = document.createElement('div');
+                    if (!(newstoshow[0])) {
+                        document.querySelector('#dashboard').style.display = 'none';
+                        document.querySelector('#changingsect').innerHTML = '';
+                        document.querySelector('#changingsect').append(newdiv);
+                        document.querySelector('#changingsect').style.display = 'block';
+                        const div1 = document.createElement('div');
+                        div1.className = 'article';
+                        div1.innerHTML =  `
+                                    <div class="n1">
+                                        <div class="n2">
+                                            <div class="n3">
+                                                <h4 class='articlehead'>No Results</h4>
+                                            </div>
+                                            <div class="n4">
+                                                <p class='sum'>Nothing to see Here, Change your Search <p>
+                                            </div>
+                                        </div>
+                                    </div>`
+                        newdiv.append(div1);
+                    }
+                    else {
+                        for (var i = 0; i < newstoshow.length; i++) {
+                            const div1 = document.createElement('div');
+                            div1.className = 'article';
+                            var title = newstoshow[i]['title'];
+                            var sec = newstoshow[i]['sector'];
+                            //console.log(title);
+                            var summary = newstoshow[i]['summary'];
+                            const divtest = document.createElement('div');
+                            divtest.innerHTML = summary;
+                            var image = divtest.querySelector('img');
+                            try {
+                                if (image.height == image.width) {
+                                    image.style.height = '150px'
+                                    image.style.width = '150px'
+                                }
+                                div1.innerHTML =  `
+                                    <div class="n1">
+                                        <div class="n2">
+                                            <div class="n3">
+                                                <h4 class='articlehead'>${title.replace('#39','')}</h4>
+                                                <div class='sectorinarticle'style='display:none;'>${sec}</div>
+                                                <img class='articleimg' src='${image.src}'/>
+                                            </div>
+                                            <div class="n4">
+                                                <p class='sum'>${summary}<p>
+                                                <button class='readmore' onclick=" document.location = '${newstoshow[i]['link']}' ">Read More</button>
+                                            </div>
+                                        </div>
+                                    </div>`
+                            }
+                            catch {
+                                div1.innerHTML =  `
+                                    <div class="n1">
+                                        <div class="n2">
+                                            <div class="n3">
+                                                <h4 class='articlehead' >${title.replace('#39','')}</h4>
+                                                <div class='sectorinarticle'style='display:none;'>${sec}</div>
+                                            </div>
+                                            <div class="n4">
+                                                <p class='sum'>${summary}<p>
+                                                <button class='readmore' onclick=" document.location = '${newstoshow[i]['link']}' ">Read More</button>
+                                            </div>
+                                        </div>
+                                    </div>`
+                            }
+                            //div1.innerHTML += '<br><h4>' + title + '</h4><br>' + arr[i]['summary'] + '<br><br><br>';
+                            newdiv.append(div1);
+                            document.querySelector('#dashboard').style.display = 'none';
+                            document.querySelector('#changingsect').innerHTML = '';
+                            document.querySelector('#changingsect').append(newdiv);
+                            document.querySelector('#changingsect').style.display = 'block';
+                        }
+                    }
+                    fixsearch();
+                    return false;
+                }
+                document.querySelector('#demo-2').onsubmit = function() {
+                    var input = document.querySelector('#searchbar').value;
+                    input = input.split(' ')
+                    newstoshow = [];
+                    for (var l = 0; l < input.length; l++) {
+                        newinput = input[l].trim();
+                        for (var i = 0; i < allnews.length; i++) {
+                            var item = allnews[i];
+                            var array = item[1];
+                            for (var k = 0; k < array.length; k++) {
+                                //console.log(array[0]['keywords']);
+                                var keywords = array[k]['keywords'];
+                                //console.log(keywords);
+                                for (var j = 0; j < keywords.length; j++) {
+                                    var word = keywords[j];
+                                    //console.log(word,input);
+                                    if (word.toLowerCase() === newinput.toLowerCase()) {
+                                        //console.log(word,input);
+                                        newstoshow.push(array[k]);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    const newdiv = document.createElement('div');
+                    if (!(newstoshow[0])) {
+                        document.querySelector('#dashboard').style.display = 'none';
+                        document.querySelector('#changingsect').innerHTML = '';
+                        document.querySelector('#changingsect').append(newdiv);
+                        document.querySelector('#changingsect').style.display = 'block';
+                        const div1 = document.createElement('div');
+                        div1.className = 'article';
+                        div1.innerHTML =  `
+                                    <div class="n1">
+                                        <div class="n2">
+                                            <div class="n3">
+                                                <h4 class='articlehead'>No Results</h4>
+                                            </div>
+                                            <div class="n4">
+                                                <p class='sum'>Nothing to see Here, Change your Search <p>
+                                            </div>
+                                        </div>
+                                    </div>`
+                        newdiv.append(div1);
+                    }
+                    else {
+                        for (var i = 0; i < newstoshow.length; i++) {
+                            const div1 = document.createElement('div');
+                            div1.className = 'article';
+                            var title = newstoshow[i]['title'];
+                            //console.log(title);
+                            var summary = newstoshow[i]['summary'];
+                            var sec = newstoshow[i]['sector'];
+                            const divtest = document.createElement('div');
+                            divtest.innerHTML = summary;
+                            var image = divtest.querySelector('img');
+                            try {
+                                if (image.height == image.width) {
+                                    image.style.height = '150px'
+                                    image.style.width = '150px'
+                                }
+                                div1.innerHTML =  `
+                                    <div class="n1">
+                                        <div class="n2">
+                                            <div class="n3">
+                                                <h4 class='articlehead'>${title.replace('#39','')}</h4>
+                                                <div class='sectorinarticle' style='display:none;'>${sec}</div>
+                                                <img class='articleimg' src='${image.src}'/>
+                                            </div>
+                                            <div class="n4">
+                                                <p class='sum'>${summary}<p>
+                                                <button class='readmore' onclick=" document.location = '${newstoshow[i]['link']}' ">Read More</button>
+                                            </div>
+                                        </div>
+                                    </div>`
+                            }
+                            catch {
+                                div1.innerHTML =  `
+                                    <div class="n1">
+                                        <div class="n2">
+                                            <div class="n3">
+                                                <h4 class='articlehead'>${title.replace('#39','')}</h4>
+                                                <div class='sectorinarticle'style='display:none;'>${sec}</div>
+                                            </div>
+                                            <div class="n4">
+                                                <p class='sum'>${summary}<p>
+                                                <button class='readmore' onclick=" document.location = '${newstoshow[i]['link']}' ">Read More</button>
+                                            </div>
+                                        </div>
+                                    </div>`
+                            }
+                            //div1.innerHTML += '<br><h4>' + title + '</h4><br>' + arr[i]['summary'] + '<br><br><br>';
+                            newdiv.append(div1);
+                            document.querySelector('#dashboard').style.display = 'none';
+                            document.querySelector('#changingsect').innerHTML = '';
+                            document.querySelector('#changingsect').append(newdiv);
+                            document.querySelector('#changingsect').style.display = 'block';
+                        }
+                    }
+                    fixsearch();
+                    return false;
+                }
+            })
+            
+            function showbody() {
+                document.querySelector('#everythingexceptloader').style.display = 'block';
+            //     html {
+            //     height: 100%;
+            // }
+
+            // body {
+            //     height: 100%;
+            //     font-family: 'Montserrat';
+            // }
+            // html,body{
+            //     background:#000;
+            //     margin:0;
+            // }
+                document.querySelector('html').style.backgroundColor = 'white';
+                document.querySelector('body').style.backgroundColor = 'white';
+                document.querySelector('html').style.margin = 'auto';
+                document.querySelector('body').style.margin = 'auto';
+                document.querySelector('.centered').style.display = 'none';
+                document.querySelector('html').style.height = '100%';
+                document.querySelector('body').style.height = '100%';
+                document.querySelector('body').style.fontFamily = 'Montserrat';
+            }
+
+            function fixsearch() {
+                var articleparent = document.querySelector('#changingsect').firstChild;
+                var arr = articleparent.childNodes;
+                var news = [['Sports'], ['Business'], ['Politics'], ['Economics'], ['Celebrities'], ['Technology']]
+                for (var z = 0; z < arr.length; z++) {
+                    var article = arr[z];
+                    article = article.innerHTML.replace(/\s/g,'');
+                    num = article.indexOf('<divclass="sectorinarticle"style="display:none;">') + 49;
+                    article = article.substring(num,num+15);
+                    othernum = article.indexOf('<')
+                    sector = article.substring(0,othernum)
+                    for (var i = 0; i < news.length; i++) {
+                        if (news[i][0] === sector) {
+                            news[i].push(arr[z].innerHTML);
+                        }
+                    }
+                }
+
+                for (var i = 0; i < news.length; i++) {
+                    len = news[i].length;
+                    if (len == 1) {
+                        news.splice(i,1);
+                    } 
+                }
+                for (var i = 0; i < news.length; i++) {
+                    len = news[i].length;
+                    if (len == 1) {
+                        news.splice(i,1);
+                    }  
+                }
+                console.log(news);
+                if (news.length == 1 && news[0][1] === undefined) {
+                    return 1;
+                }
+                const bigdiv = document.createElement('div');
+                for (var i = 0; i < news.length; i++) {
+                    const d = document.createElement('h1');
+                    d.id = 'searchhead';
+                    bigdiv.className = 'allsearchresults';
+                    d.innerHTML=news[i][0];
+                    bigdiv.append(d);
+                    const otherbigdiv = document.createElement('div');
+                    otherbigdiv.className = 'eachsectorsarticles';
+                    for (var j = 1; j < news[i].length; j++) {
+                        const div = document.createElement('div');
+                        articleobject = news[i][j];
+                        div.innerHTML = `<div class='article'>${articleobject}</div>`;
+                        otherbigdiv.append(div);
+                    }
+                    bigdiv.append(otherbigdiv);
+                }
+                document.querySelector('#changingsect').innerHTML = '';
+                document.querySelector('#changingsect').append(bigdiv);
+                if (document.querySelector('#changingsect').firstChild.lastChild.tagName.toLowerCase() == 'h1') {
+                    document.querySelector('#changingsect').firstChild.lastChild.innerHTML = '';
+                }
+                document.querySelectorAll('.eachsectorsarticles').forEach(element => {
+                    if (element.innerHTML === '') {
+                        element.style.display = 'none'
+                        var sibling = element.previousElementSibling;
+                        sibling.style.display = 'none';
+                    }
+                }
+                )
+
+            }
+
+            function putindash(news) {
+                console.log(news);
+                showbody();
+                for (var z = 0; z < news.length; z++) {
+                    var item = news[z];
+                    var sec = news[z][0];
+                    var arr = news[z][1];
+                    const col = document.querySelector(`.${sec}`);
+                    const newdiv = document.createElement('div');
+                    newdiv.className = 'newsscroll';
+                    for (var i = 0; i < arr.length; i++) {
+                        const div1 = document.createElement('div');
+                        div1.className = 'article';
+                        var title = arr[i]['title'];
+                        var summary = arr[i]['summary'];
+                        const divtest = document.createElement('div');
+                        divtest.innerHTML = summary;
+
+                        //either A HREF or <img src
+                        var image = divtest.querySelector('img');
+                        try {
+                            if (image.height == image.width) {
+                                image.style.height = '150px'
+                                image.style.width = '150px'
+                            }
+                            div1.innerHTML =  `
+                                <div class="n1">
+                                    <div class="n2">
+                                        <div class="n3">
+                                            <h4 class='articlehead'>${title.replace('#39','')}</h4>
+                                            <img class='articleimg' src='${image.src}'/>
+                                        </div>
+                                        <div class="n4">
+                                            <p class='sum'>${summary}<p>
+                                            <button class='readmore' onclick=" document.location = '${arr[i]['link']}' ">Read More</button>
+                                        </div>
+                                    </div>
+                                </div>`
+                        }
+                        catch {
+                            div1.innerHTML =  `
+                                <div class="n1">
+                                    <div class="n2">
+                                        <div class="n3">
+                                            <h4 class='articlehead' >${title.replace('#39','')}</h4>
+                                        </div>
+                                        <div class="n4">
+                                            <p class='sum'>${summary}<p>
+                                            <button class='readmore' onclick=" document.location = '${arr[i]['link']}' ">Read More</button>
+                                        </div>
+                                    </div>
+                                </div>`
+                        }
+                        //div1.innerHTML += '<br><h4>' + title + '</h4><br>' + arr[i]['summary'] + '<br><br><br>';
+                        newdiv.append(div1);
+                    }
+                    col.append(newdiv);
+                }
+                //put info in dashboard
+                //parse through each array entry and make it a presentable div
+            }
+
+            function load(url,sector, array, type, callback) {
+                feednami.load(url)
+                    .then(function(feed) {
+                        if (type === 'dashboard') {
+                            if (!(sector == undefined)) {
+                                // console.log(array);
+                                // console.log(typeof(array));
+                                if (typeof(array) === 'object') {
+                                    var num = array.indexOf(sector);
+                                    if (!(num == -1)) {
+                                        array[num] = [sector, feed['entries']];
+                                        callback(array);
+                                    }
+                                }
+                            }
+                        }
+                        else if (type === 'dedicatedpage') {
+                            array[0].push(feed['entries']);
+                            callback(array);
+                        }
+                    });
+            }
+            function getnews(plist) {
+                var news = [];
+                var newsfordash = [];
+                var plistforload = plist;
+                for (var j = 0; j < plist.length; j++) {
+                    news.push(plist[j]);
+                }
+                var feeds = {{ feeds|safe }}
+                for (var i = 0; i < feeds.length; i++) {
+                    var li = feeds[i];
+                    var sec = li[0];
+                    for (var j = 0; j < plist.length; j++) {
+                        if (plist[j] === sec) {
+                            for (var k = 0; k < feeds.length; k++) {
+                                var li2 = feeds[k];
+                                if (li2[0] === sec) {
+                                    var sec2 = JSON.parse(JSON.stringify(li2[0]));
+                                    var sec3 = JSON.parse(JSON.stringify(sec2));
+                                    for (var l = 1; l < li2.length; l++) {
+                                        const url = li2[l];
+                                        var newsplacedash = JSON.parse(JSON.stringify(news));
+                                        const sector = JSON.parse(JSON.stringify(sec3));
+                                        load(url, sector, newsplacedash, 'dashboard', function(data) {
+                                            newsfordash.push(data);
+                                            newsplacedash = []
+                                            for (var j = 0; j < plist.length; j++) {
+                                                newsplacedash.push(plist[j]);
+                                            }
+                                            if (newsfordash.length == plist.length) {
+                                                var othernews = []
+                                                for (var j = 0; j < newsfordash.length; j++) {
+                                                    var comparr = newsfordash[j];
+                                                    for (var k = 0; k < comparr.length; k++) {
+                                                        if (typeof(comparr[k]) === 'object') {
+                                                            othernews.push(comparr[k]);
+                                                        }
+                                                    }
+                                                } 
+                                                putindash(othernews);
+                                            }
+                                            
+                                        });
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            function dedicatedpage(sec) {
+                document.querySelector('#changingsect').innerHTML = '';
+                if (sec === 'Home') {
+                    document.querySelector('#dashboard').style.display = 'block';
+                    document.querySelector('#changingsect').style.display = 'none';
+                    document.querySelector('#changingsect').innerHTML = '';
+                    return '1';
+                }
+                document.querySelector('#dashboard').style.display = 'none';
+                const bigdiv = document.createElement('div');
+                bigdiv.id = 'specialisednews';
+                document.querySelector('#changingsect').style.display = 'block';
+                //make page
+                const d = document.createElement('div');
+                d.className = `col-sm-1 spec`
+                const header = document.createElement('div');
+                header.className = 'dashhead';
+                header.innerHTML = sec;
+                d.style.height = `100%`;
+                d.style.width = '100%';
+                header.style.left = '40%';
+                d.append(header);
+                snews = []
+                document.querySelector('#changingsect').append(d);
+                var feedstouuse = []
+                var feeds = {{ feeds|safe }}
+                for (var i = 0; i < feeds.length; i++) {
+                    var sector = feeds[i][0];
+                    if (sec === sector) {
+                        feedstouuse.push(feeds[i][1]);
+                    }
+                }
+                url = feedstouuse[0];
+                var arr = [[sec]];
+                var snews = load(url, sec, arr,'dedicatedpage', function(data) {
+                    makededicatedpage(data);
+                });
+                document.querySelector('#everythingexceptloader').style.opacity = '0';
+                document.querySelector('html').style.backgroundColor = 'black';
+                document.querySelector('body').style.backgroundColor = 'black';
+                document.querySelector('html').style.margin = '0';
+                document.querySelector('body').style.margin = '0';
+                document.querySelector('.centered').style.display = 'block';
+                document.querySelector('html').style.height = '100%';
+                document.querySelector('body').style.height = '100%';
+                document.querySelector('body').style.fontFamily = 'Montserrat';
+
+            function makededicatedpage(snews) {
+                    document.querySelector('#everythingexceptloader').style.opacity = '1';
+                    showbody();
+                    arr = snews[0][1];
+                    // const col = document.querySelector(`${sec}special`);
+                    // console.log(col);
+                    const newdiv = document.createElement('div');
+                    for (var i = 0; i < arr.length; i++) {
+                        const div1 = document.createElement('div');
+                        div1.className = 'article';
+                        var title = arr[i]['title'];
+                        //console.log(title);
+                        var summary = arr[i]['summary'];
+                        const divtest = document.createElement('div');
+                        divtest.innerHTML = summary;
+                        var image = divtest.querySelector('img');
+                        try {
+                            if (image.height == image.width) {
+                                image.style.height = '150px'
+                                image.style.width = '150px'
+                            }
+                            div1.innerHTML =  `
+                                <div class="n1">
+                                    <div class="n2">
+                                        <div class="n3">
+                                            <h4 class='articlehead'>${title.replace('#39','')}</h4>
+                                            <img class='articleimg' src='${image.src}'/>
+                                        </div>
+                                        <div class="n4">
+                                            <p class='sum'>${summary}<p>
+                                            <button class='readmore' onclick=" document.location = '${arr[i]['link']}' ">Read More</button>
+                                        </div>
+                                    </div>
+                                </div>`
+                        }
+                        catch {
+                            div1.innerHTML =  `
+                                <div class="n1">
+                                    <div class="n2">
+                                        <div class="n3">
+                                            <h4 class='articlehead' >${title.replace('#39','')}</h4>
+                                        </div>
+                                        <div class="n4">
+                                            <p class='sum'>${summary}<p>
+                                            <button class='readmore' onclick=" document.location = '${arr[i]['link']}' ">Read More</button>
+                                        </div>
+                                    </div>
+                                </div>`
+                        }
+                        //div1.innerHTML += '<br><h4>' + title + '</h4><br>' + arr[i]['summary'] + '<br><br><br>';
+                        newdiv.append(div1);
+                    }
+                    document.querySelector('.spec').append(newdiv);
+            }
+            }
+
+        </script>
+        <style>
+
+            .eachsectorsarticles {
+                height: 350px;
+                width:auto;
+                overflow-x: auto;
+                overflow-y: hidden;
+                display: flex;
+            }
+            .eachsectorsarticles > div > div {
+                height: 290px;
+                width: 500px;
+            }
+            .eachsectorsarticles > div > div > div{
+                height: 300px;
+                width: 100%;
+            }
+            #changingsect {
+                display: none;
+                position: absolute;
+                padding:20px;
+                left: 160px;
+                padding-top: 50px;
+                right:0;
+                width:87.5%;
+                height:150%;
+            }
+            .navbar {
+                z-index:2;
+                position: fixed;
+                height: 110px;
+                font-family: Montserrat, sans-serif;
+                margin-bottom: 0;
+                border: 0;
+                font-size: 11px !important;
+                letter-spacing: 4px;
+                background-color: rgb(248, 120, 120, 0.3);;
+            }
+            .navbar li a, .navbar  { 
+                color: black !important;
+            }
+
+            .nav navbar-nav navbar-right {
+                position: absolute;
+                right: 0;
+            }
+
+            @font-face {
+                font-family: 'Montserrat';
+                font-style: normal;
+                font-weight: 400;
+                src: local('Montserrat Regular'), local('Montserrat-Regular'), url(https://fonts.gstatic.com/s/montserrat/v12/JTUSjIg1_i6t8kCHKm459WRhyzbi.woff2) format('woff2');
+                unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+            }
+            /* cyrillic */
+            @font-face {
+                font-family: 'Montserrat';
+                font-style: normal;
+                font-weight: 400;
+                src: local('Montserrat Regular'), local('Montserrat-Regular'), url(https://fonts.gstatic.com/s/montserrat/v12/JTUSjIg1_i6t8kCHKm459W1hyzbi.woff2) format('woff2');
+                unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+            }
+            /* vietnamese */
+            @font-face {
+                font-family: 'Montserrat';
+                font-style: normal;
+                font-weight: 400;
+                src: local('Montserrat Regular'), local('Montserrat-Regular'), url(https://fonts.gstatic.com/s/montserrat/v12/JTUSjIg1_i6t8kCHKm459WZhyzbi.woff2) format('woff2');
+                unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+            }
+            /* latin-ext */
+            @font-face {
+                font-family: 'Montserrat';
+                font-style: normal;
+                font-weight: 400;
+                src: local('Montserrat Regular'), local('Montserrat-Regular'), url(https://fonts.gstatic.com/s/montserrat/v12/JTUSjIg1_i6t8kCHKm459Wdhyzbi.woff2) format('woff2');
+                unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+            }
+            /* latin */
+            @font-face {
+                font-family: 'Montserrat';
+                font-style: normal;
+                font-weight: 400;
+                src: local('Montserrat Regular'), local('Montserrat-Regular'), url(https://fonts.gstatic.com/s/montserrat/v12/JTUSjIg1_i6t8kCHKm459Wlhyw.woff2) format('woff2');
+                unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+            }
+
+            #everythingexceptloader {
+                display: none;
+            }
+            .glyphicon {
+                font-size:20px;
+            }
+            /* html {
+                height: 100%;
+            }
+
+            body {
+                height: 100%;
+                font-family: 'Montserrat';
+            } */
+
+            #logo {
+                position: absolute;
+                height: 90%;
+                width:auto;
+                max-width: 150px;
+            }
+
+            .navbar-brand, .navbar-head {
+                z-index: 7;
+                position: absolute;
+                left: 200px;
+                top:25px;
+                color: rgb(248, 120, 120);
+                font-weight: 900;
+                font-size: 30px;
+                text-shadow: 0px 1px, 1px 0px, 1px 1px;
+            }
+
+            #header {
+                padding-left: 250px;
+                padding-bottom: 10px;
+                color:#006187;
+                font-weight: 900;
+                font-size: 40px;
+                text-shadow: 0px 1px, 1px 0px, 1px 1px;
+            }
+
+            #hu {
+                position: absolute;
+                right: 250px;
+                top:40px;
+            }
+
+            .dashhead {
+                position: fixed;
+                z-index: 5;
+                background-color: white;
+                position: absolute;
+                left:35%;
+                color: rgb(248, 120, 120, 0.9);;
+                font-weight: 900;
+                font-size: 25px;
+                text-shadow: 0px 1px, 1px 0px, 1px 1px;
+            }
+
+            #logout {
+                position: absolute;
+                right: 50px;
+                top:16px;
+            }
+
+            .sidenav {
+                height: 100%;
+                width: 130px;
+                position: fixed;
+                z-index: 1;
+                left: 0;
+                background-color: rgb(248, 120, 120, 0.3);;
+                padding-top: 100px;
+            }
+
+            /* .sidenav a {
+                text-align: center;
+                padding: 5px;
+                text-decoration: none;
+                font-size:15px;
+                color: #818181;
+                display: block;
+            } */
+
+            .sidenav a:hover {
+                color: #f1f1f1;
+            }
+
+            #searchhead {
+                color:#006187;
+                font-weight: 900;
+                font-size: 30px;
+                text-shadow: 0px 1px, 1px 0px, 1px 1px;
+                padding: 20px;
+            }
+
+            @media screen and (max-height: 450px) {
+                .sidenav {padding-top: 15px;}
+                .sidenav a {font-size: 18px;}
+            }
+            
+            #news {
+                position: absolute;
+                padding:20px;
+                left: 160px;
+                padding-top: 50px;
+                right:0;
+                width:87.5%;
+                height:200%;
+            }
+
+            .column {
+                border-right: 1px solid lightgray;
+                border-bottom: 1px solid lightgray;
+            }
+
+            .newsscroll {
+                height: 90%;
+                overflow-y: auto;
+            }
+            .icon {
+                width:100px;
+                height:100px;
+            }
+
+            .flex-container {
+                display: flex;
+                flex-wrap: wrap;
+            }
+
+            .flex-container > div {
+                width:80px;
+                height:80px;
+                text-align: center;
+                line-height: 75px;
+                padding: 15px;
+                font-size:15px;
+                display: block;
+                margin:15px;
+                /* writing-mode:vertical-rl; */
+            }
+
+            .n1 {
+                padding: 25px;
+                background-color: transparent;
+                width:80%;
+                height: 300px;
+                perspective: 1000px;
+                margin:40px;
+                overflow: hidden;
+            }
+            .n2 {
+                position: relative;
+                width:80%;
+                height: 300px;
+                text-align: center;
+                transition: transform 0.6s;
+                transform-style: preserve-3d;
+                box-shadow: 4px 8px 8px 4px rgba(255, 0, 0, 0.2);
+            }
+
+            .n1:hover .n2 {
+                transform: rotateY(180deg);
+            }
+
+            .n3, .n4 {
+                position: absolute;
+                width:80%;
+                height: 300px;
+                background-color: silver;
+                -webkit-backface-visibility: hidden;
+                backface-visibility: hidden;
+            }
+
+            .n4 {
+                transform: rotateY(180deg);
+                position: absolute;
+                top:0;
+                left:0;
+                right:0;
+                bottom:0;
+                margin: auto;
+                color:black;
+                font-size: 10px;
+            }
+
+            .n4 > img, a {
+                display: none;
+            }
+
+            .n4 > p > img,a {
+                display: none;
+            }
+
+            .nav1 {
+                padding: 25px;
+                background-color: transparent;
+                width:100px;
+                height:100px;
+                perspective: 1000px;
+            }
+            .nav2 {
+                background-color: rgba(255, 104, 104, 0.3);;
+                left: 30px;
+                position: relative;
+                width:100px;
+                height:100px;;
+                text-align: center;
+                transition: transform 0.6s;
+                transform-style: preserve-3d;
+                box-shadow: 24px 48px 64px 24px rgba(255, 0, 0, 0.2);
+            }
+
+            .nav1:hover .nav2 {
+                transform: rotateY(180deg);
+            }
+
+            .nav3, .nav4 {
+                position: absolute;
+                left:-29px;
+                width:100px;
+                height:100px;
+                -webkit-backface-visibility: hidden;
+                backface-visibility: hidden;
+            }
+
+            .nav4 {
+                transform: rotateY(180deg);
+                position: absolute;
+                top:0;
+                left:0;
+                right:0;
+                bottom:0;
+                margin: auto;
+                color:black;
+                font-weight: 900;
+                font-size: 18px;
+                text-shadow: 0px 1px, 1px 0px, 1px 1px;
+            }
+
+            .articlehead {
+                position: absolute;
+                font-weight: 900;
+                font-size: 15px;
+                text-shadow: 0px 1px, 1px 0px, 1px 1px;
+                left:20px;
+                padding-right: 20px;
+                width:97%;
+            }
+            .articleimg {
+                position: absolute;
+                right:0;
+                width:auto;
+                height:auto;
+                max-width: 80%;
+                max-height:150px;
+                bottom: 20px;
+                opacity: 0.85;
+            }
+
+            .readmore {
+                display:inline-block;
+                padding:0.5em 3em;
+                border:0.16em solid #FFFFFF;
+                margin:0 0.3em 0.3em 0;
+                box-sizing: border-box;
+                text-decoration:none;
+                text-transform:uppercase;
+                font-family:'Roboto',sans-serif;
+                font-weight:400;
+                color:#FFFFFF;
+                background-color: orange;
+                text-align:center;
+                transition: all 0.15s;
+            }
+            .readmore:hover{
+                color: orange;
+                border-color:#DDDDDD;
+                background-color:#DDDDDD;
+            }
+            .readmore:active{
+                color:#BBBBBB;
+                border-color:#BBBBBB;
+            }
+            @media all and (max-width:30em){
+                #readmore{
+                    display:block;
+                    margin:0.4em auto;
+                }
+            }
+
+            .sum {
+                font-size: 13px;
+                padding: 20px;
+            }
+            .s {
+                color:black;
+            }
+
+            #extraimg {
+                position: absolute;
+                height: 170px;
+                width:340px;
+                right: 20px;
+                top: 125px;
+                /* display: none; */
+            }
+
+            @media screen and (max-width: 930px) {
+                #extraimg {
+                    display: none;
+                }
+            }
+
+            html,body{
+                background:#000;
+                margin:0;
+                overflow-x: hidden;
+                overflow-y: scroll;
+            }
+            .centered{
+                width:400px;
+                height:400px;
+                position:absolute;
+                top:50%;
+                left:50%;
+                transform:translate(-50%,-50%);
+                background:#000;
+                filter: blur(10px) contrast(20);
+            }
+            .blob-1,.blob-2{
+                width:70px;
+                height:70px;
+                position:absolute;
+                background:#fff;
+                border-radius:50%;
+                top:50%;left:50%;
+                transform:translate(-50%,-50%);
+            }
+            .blob-1{
+                left:20%;
+                animation:osc-l 2.5s ease infinite;
+            }
+            .blob-2{
+                left:80%;
+                animation:osc-r 2.5s ease infinite;
+                background:#0ff;
+            }
+            @keyframes osc-l{
+                0%{left:20%;}
+                50%{left:50%;}
+                100%{left:20%;}
+            }
+            @keyframes osc-r{
+                0%{left:80%;}
+                50%{left:50%;}
+                100%{left:80%;}
+            }
+
+            input {
+                outline: none;
+            }
+            input[type=search] {
+                -webkit-appearance: textfield;
+                -webkit-box-sizing: content-box;
+                font-family: inherit;
+                font-size: 100%;
+            }
+            input::-webkit-search-decoration,
+            input::-webkit-search-cancel-button {
+                display: none; 
+            }
+
+
+            input[type=search] {
+                background: #ededed url(https://static.tumblr.com/ftv85bp/MIXmud4tx/search-icon.png) no-repeat 9px center;
+                border: solid 1px #ccc;
+                padding: 9px 10px 9px 32px;
+                width: 55px;
+                
+                -webkit-border-radius: 10em;
+                -moz-border-radius: 10em;
+                border-radius: 10em;
+                
+                -webkit-transition: all .5s;
+                -moz-transition: all .5s;
+                transition: all .5s;
+            }
+            input[type=search]:focus {
+                width: 130px;
+                background-color: #fff;
+                border-color: #66CC75;
+                
+                -webkit-box-shadow: 0 0 5px rgba(109,207,246,.5);
+                -moz-box-shadow: 0 0 5px rgba(109,207,246,.5);
+                box-shadow: 0 0 5px rgba(109,207,246,.5);
+            }
+
+
+            input:-moz-placeholder {
+                color: #999;
+            }
+            input::-webkit-input-placeholder {
+                color: #999;
+            }
+
+            /* Demo 2 */
+
+            #demo-2 {
+                display: none;
+                position:absolute;
+                top:30%;
+                right:40%;
+            }
+            #demo-2 input[type=search] {
+                width: 15px;
+                padding-left: 10px;
+                color: transparent;
+                cursor: pointer;
+            }
+            #demo-2 input[type=search]:hover {
+                background-color: orange;
+            }
+            #demo-2 input[type=search]:focus {
+                width: 130px;
+                padding-left: 32px;
+                color: #000;
+                background-color: orange;
+                cursor: auto;
+            }
+            #demo-2 input:-moz-placeholder {
+                color: transparent;
+            }
+            #demo-2 input::-webkit-input-placeholder {
+                color: transparent;
+            }
+
+            
+            @media screen and (max-width: 950px) {
+                #hu {
+                    display: none;
+                }
+                .navbar-brand {
+                    top:0;
+                    left:100px;
+                    font-size: 20px;
+                }
+                #demo-2 {
+                    position: absolute;
+                    top:44px;
+                    left:110px;
+                }
+                #logo {
+                    width:70px;
+                    height:70px;
+                }
+                .navbar {
+                    height: 90px;
+                }
+                .sidenav {
+                    width: 100px;
+                }
+                #logout {
+                    position: absolute;
+                    top:80px;
+                    left:0;
+                    font-size: 8px;
+                    width:150px;
+                }
+                .nav1 {
+                    width:70px;
+                    height:70px;
+                }
+
+                .n1 {
+                    width:300px;
+                }
+                .nav2 {
+                    width:70px;
+                    height:70px;;
+                    left:0;
+                    background-color: rgba(0, 0, 0, 0.3);
+                }
+
+                .nav3, .nav4 {
+                    width:70px;
+                    height:70px;
+                }
+                .icon {
+                    width:50px;
+                    height: 50px;
+                }
+                #news {
+                    width:150%;
+                    height: 100%;
+                    left: 55px;
+                }
+                #header {
+                    padding-left: 120px;
+                    font-size: 37px;
+                }
+                .allsearchresults {
+                    position: absolute;
+                    top:-100px;
+                    left:-50px;
+                }
+                .eachsectorsarticles {
+                    height: 300px;
+                    width:300px;
+                    overflow-x: auto;
+                    overflow-y: hidden;
+                    display: flex;
+                }
+                .spec {
+                    position: absolute;
+                    top:-50px;
+                    left:-50px;
+                }
+                .n4 {
+                    font-size:7px;
+                }
+                .sum {
+                    font-size: 10px;
+                }
+                #pc {
+                    font-size: 8px!important;
+                    left:145px!important;
+                    top:30px!important;
+                    display: block!important;
+                }
+                .dashhead {
+                    left:15%!important;
+                }
+                .column {
+                    height:500px!important;
+                }
+                .articleimg {
+                    opacity: 0.65;
+                }
+            }
+            #pc {
+                position: absolute;
+                top:15px;
+                left:450px;
+                font-size: smaller;
+                text-decoration: underline;
+                color:#006187;
+                font-weight: 900;
+            }
+
+        </style>
+    </head>
+    <body>
+        <div class = "centered">
+            <div class = "blob-1"></div>
+            <div class = "blob-2"></div>
+        </div>
+        <div class="loader"></div>
+        <div class="shadow"></div>
+        <div id='everythingexceptloader'>
+            <nav class="navbar navbar-default navbar-fixed-top">
+                <div class="container-fluid">
+                    <img id='logo' src="{% static 'logo.jpg' %}"/>
+                    <div class="navbar-header">
+                        <p class="navbar-brand">NewsForYou</p>
+                    </div>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li id='pc'>
+                            <a id='pca' href="{% url 'preferencechange' %}"> Change Your News<br id='pcb'>Preferences (Dashboard)</a>
+                        </li>
+                        <form id="demo-2">
+                            <input id='searchbar' type="search" placeholder="Search">
+                        </form>
+                        <li id='hu'> <b>Hello <i>{{ user }}</i></b>  </li>
+                        <li id='logout'><a href="{% url 'logout' %}"> Log Out <span class="glyphicon glyphicon-log-out"></span></a></li>
+                    </ul>
+                </div>
+            </nav>
+            <div class="sidenav">
+                <div class='flex-container'>
+                    <div class="flip-card nav1">
+                        <div class="flip-card-inner nav2">
+                            <div class="flip-card-front nav3" style='background-color: white;'>
+                                <img class='icon' src="{% static 'home.jpg' %}"/>
+                            </div>
+                            <div class="flip-card-back nav4">
+                                <p onclick="dedicatedpage('Home')" class='s'>Home</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flip-card nav1">
+                        <div class="flip-card-inner nav2">
+                            <div class="flip-card-front nav3" style='background-color: green;'>
+                                <img class='icon' src="{% static 'sportl.jpg' %}"/>
+                            </div>
+                            <div class="flip-card-back nav4">
+                                <p onclick="dedicatedpage('Sports')" class='s'>Sports</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flip-card nav1">
+                        <div class="flip-card-inner nav2">
+                            <div class="flip-card-front nav3" style='background-color: yellow;'>
+                                <img class='icon' src="{% static 'businessl.jpg' %}"/>
+                            </div>
+                            <div class="flip-card-back nav4">
+                                <p class='s' onclick="dedicatedpage('Business')">Business</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flip-card nav1">
+                        <div class="flip-card-inner nav2">
+                            <div class="flip-card-front nav3" style='background-color: red;'>
+                                <img class='icon' src="{% static 'politicsl.jpg' %}"/>
+                            </div>
+                            <div class="flip-card-back nav4">
+                                <p onclick="dedicatedpage('Politics')" class='s'>Politics</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flip-card nav1">
+                        <div class="flip-card-inner nav2">
+                            <div class="flip-card-front nav3" style='background-color: blue;'>
+                                <img class='icon' src="{% static 'economicsl.jpg' %}"/>
+                            </div>
+                            <div class="flip-card-back nav4">
+                                <p onclick="dedicatedpage('Economics')" class='s'>Economics</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flip-card nav1">
+                        <div class="flip-card-inner nav2">
+                            <div class="flip-card-front nav3" style='background-color: orange;'>
+                                <img class='icon' src="{% static 'celebritiesl.jpg' %}"/>
+                            </div>
+                            <div class="flip-card-back nav4">
+                                <p onclick="dedicatedpage('Celebrities')" class='s'>Celebrities</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flip-card nav1">
+                        <div class="flip-card-inner nav2">
+                            <div class="flip-card-front nav3" style='background-color: purple;'>
+                                <img class='icon' src="{% static 'tech.jpg' %}"/>
+                            </div>
+                            <div class="flip-card-back nav4">
+                                <p onclick="dedicatedpage('Technology')" class='s'>Technology</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <div id='changingsect'></div>
+            <div id='dashboard'>
+                <div id='header'>
+                    Dashboard
+                </div>
+                <img id='extraimg' src="{% static 'extraimg.jpg' %}"/>
+                <div id='news'>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

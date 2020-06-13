@@ -1,0 +1,310 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+        <script>
+            // #onclick div add to array pass to django which passes to database
+            var chosensectors = []
+            var checked = 0;
+            setInterval(() => {
+                if (checked == 0) {
+                    document.querySelector('#button').style.display = 'none';
+                }
+                else {
+                    document.querySelector('#button').style.display = 'block';
+                }
+            }, 100);
+            function choose(sec) {
+                chosensectors.push(sec);
+                checked += 1;
+                document.querySelector(`.${sec}`).parentElement.parentElement.innerHTML = 'placeholder'
+                var all = document.querySelectorAll('.flip-card');
+                for (var i = 0; i < all.length; i++) {
+                    if (all[i].innerHTML === 'placeholder') {
+                        all[i].className = 'innertext flip-card';
+                        all[i].innerHTML = `You have chosen to see <br> <b>${sec} News</b> <br>`;
+                        all[i].style.backgroundColor = 'orangered';
+                        all[i].style.color = 'white';
+                        all[i].style.fontSize = '25px';
+                        const button = document.createElement('button');
+                        button.type = 'button'
+                        button.className = `btn btn-default ${sec}`
+                        const span = document.createElement('span');
+                        span.className = 'glyphicon glyphicon-remove'
+                        button.append(span)
+                        all[i].append(button)
+                        document.querySelector(`.${sec}`).onclick = function() {
+                            Array.prototype.remove = function() {
+                                var what, a = arguments, L = a.length, ax;
+                                while (L && this.length) {
+                                    what = a[--L];
+                                    while ((ax = this.indexOf(what)) !== -1) {
+                                        this.splice(ax, 1);
+                                    }
+                                }
+                                return this;
+                            };
+                            chosensectors.remove(sec);
+                            checked -= 1;
+                            document.querySelector(`.${sec}`).parentElement.style = '';
+                            if (sec === 'Sports') {
+                                document.querySelector(`.${sec}`).parentElement.innerHTML =  `<div class="flip-card-inner"><div class="flip-card-front"><img src="{% static 'Sports.jpg' %}"/></div><div onclick='choose("${sec}")' class="flip-card-back ${sec}">${sec} News</div></div>`
+                            }
+                            else if (sec === 'Business') {
+                                document.querySelector(`.${sec}`).parentElement.innerHTML =  `<div class="flip-card-inner"><div class="flip-card-front"><img src="{% static 'Business.jpg' %}"/></div><div onclick='choose("${sec}")' class="flip-card-back ${sec}">${sec} News</div></div>`
+                            }
+                            else if (sec === 'Economics') {
+                                document.querySelector(`.${sec}`).parentElement.innerHTML =  `<div class="flip-card-inner"><div class="flip-card-front"><img src="{% static 'Economics.jpg' %}"/></div><div onclick='choose("${sec}")' class="flip-card-back ${sec}">${sec} News</div></div>`
+                            }
+                            else if (sec === 'Technology') {
+                                document.querySelector(`.${sec}`).parentElement.innerHTML =  `<div class="flip-card-inner"><div class="flip-card-front"><img src="{% static 'Technology.jpg' %}"/></div><div onclick='choose("${sec}")' class="flip-card-back ${sec}">${sec} News</div></div>`
+                            }
+                            else if (sec === 'Politics') {
+                                document.querySelector(`.${sec}`).parentElement.innerHTML =  `<div class="flip-card-inner"><div class="flip-card-front"><img src="{% static 'Politics.jpg' %}"/></div><div onclick='choose("${sec}")' class="flip-card-back ${sec}">${sec} News</div></div>`
+                            }
+                            else if (sec === 'Celebrities') {
+                                document.querySelector(`.${sec}`).parentElement.innerHTML =  `<div class="flip-card-inner"><div class="flip-card-front"><img src="{% static 'Celebrities.jpg' %}"/></div><div onclick='choose("${sec}")' class="flip-card-back ${sec}">${sec} News</div></div>`
+                            }
+                            document.querySelector('#sectors').value = chosensectors;
+                        }
+                    }
+                }
+                document.querySelector('#sectors').value = chosensectors;
+            }
+
+        </script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"> 
+        <style>
+            @font-face {
+                font-family: 'Montserrat';
+                font-style: normal;
+                font-weight: 400;
+                src: local('Montserrat Regular'), local('Montserrat-Regular'), url(https://fonts.gstatic.com/s/montserrat/v12/JTUSjIg1_i6t8kCHKm459WRhyzbi.woff2) format('woff2');
+                unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+            }
+            /* cyrillic */
+            @font-face {
+                font-family: 'Montserrat';
+                font-style: normal;
+                font-weight: 400;
+                src: local('Montserrat Regular'), local('Montserrat-Regular'), url(https://fonts.gstatic.com/s/montserrat/v12/JTUSjIg1_i6t8kCHKm459W1hyzbi.woff2) format('woff2');
+                unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+            }
+            /* vietnamese */
+            @font-face {
+                font-family: 'Montserrat';
+                font-style: normal;
+                font-weight: 400;
+                src: local('Montserrat Regular'), local('Montserrat-Regular'), url(https://fonts.gstatic.com/s/montserrat/v12/JTUSjIg1_i6t8kCHKm459WZhyzbi.woff2) format('woff2');
+                unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+            }
+            /* latin-ext */
+            @font-face {
+                font-family: 'Montserrat';
+                font-style: normal;
+                font-weight: 400;
+                src: local('Montserrat Regular'), local('Montserrat-Regular'), url(https://fonts.gstatic.com/s/montserrat/v12/JTUSjIg1_i6t8kCHKm459Wdhyzbi.woff2) format('woff2');
+                unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+            }
+            /* latin */
+            @font-face {
+                font-family: 'Montserrat';
+                font-style: normal;
+                font-weight: 400;
+                src: local('Montserrat Regular'), local('Montserrat-Regular'), url(https://fonts.gstatic.com/s/montserrat/v12/JTUSjIg1_i6t8kCHKm459Wlhyw.woff2) format('woff2');
+                unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+            }
+
+            .glyphicon {
+                font-size:50px;
+            }
+            html {
+                height: 100%;
+            }
+
+            body {
+                height: 100%;
+                font-family: 'Montserrat';
+            }
+
+            .flex-container {
+                display: flex;
+                flex-wrap: wrap;
+                padding-top: 50px;
+                height:70%;
+                width:100%;
+            }
+
+            .flex-container > div {
+                padding-top: 0px;
+                background-color: #f1f1f1;
+                width: 32.33%;
+                height:50%;
+                margin: 0px;
+                text-align: center;
+                line-height: 75px;
+                font-size: 30px;
+            }
+
+            .flip-card {
+                background-color: transparent;
+                width: 300px;
+                height: 300px;
+                perspective: 1000px;
+            }
+
+            .flip-card-inner {
+                position: relative;
+                width: 100%;
+                height: 100%;
+                text-align: center;
+                transition: transform 0.6s;
+                transform-style: preserve-3d;
+                box-shadow: 0 4px 8px 0 rgba(255, 0, 0, 0.2);
+            }
+
+            .flip-card:hover .flip-card-inner {
+                transform: rotateY(180deg);
+            }
+
+            .flip-card-front, .flip-card-back {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                -webkit-backface-visibility: hidden;
+                backface-visibility: hidden;
+            }
+
+            .flip-card-front {
+                background-color: white;
+                color: black;
+            }
+
+            .flip-card-back {
+                background-color: orangered;
+                color: white;
+                transform: rotateY(180deg);
+            }
+
+            img {
+                width:100%;
+                height: 100%;
+            }
+
+            #button {
+                padding-top: 20px;
+                padding:30px;
+            }
+
+            .chosensect {
+                background-color: orangered;
+                color: white;
+                transform: rotateY(180deg);
+            }
+
+            @media screen and (max-width: 950px) {
+                .flex-container > div {
+                    width: 50%;
+                }
+                #button {
+                    position: absolute;
+                    right:22%;
+                    top:90px;
+                }
+                #buttonreal {
+                    font-size: 15px;
+                }
+                .innertext {
+                    font-size: 10px!important;
+                }
+                br {
+                    display: none;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div style="text-align:center; padding:30px;">
+            <h2>Choose The Sectors Of News Which You Are Interested In ({{ user }})</h2>
+        </div>
+        <div class="flex-container">
+            <div class="flip-card" >
+                <div class="flip-card-inner">
+                  <div class="flip-card-front">
+                    <img src="{% static 'Sports.jpg' %}"/>
+                  </div>
+                  <div onclick='choose("Sports")' class="flip-card-back Sports">
+                    Sports News
+                  </div>
+                </div>
+            </div>
+            <div class="flip-card">
+                <div class="flip-card-inner">
+                  <div class="flip-card-front">
+                    <img src="{% static 'Business.jpg' %}"/>
+                  </div>
+                  <div onclick='choose("Business")' class="flip-card-back Business">
+                    Business News
+                  </div>
+                </div>
+            </div>
+            <div class="flip-card">
+                <div class="flip-card-inner">
+                  <div class="flip-card-front">
+                    <img src="{% static 'Economics.jpg' %}"/>
+                  </div>
+                  <div onclick='choose("Economics")' class="flip-card-back Economics">
+                    Economics News
+                  </div>
+                </div>
+            </div> 
+            <div class="flip-card">
+                <div class="flip-card-inner">
+                  <div class="flip-card-front">
+                    <img src="{% static 'Celebrities.jpg' %}"/>
+                  </div>
+                  <div onclick='choose("Celebrities")' class="flip-card-back Celebrities">
+                    Celebrities' News
+                  </div>
+                </div>
+            </div>
+            <div class="flip-card">
+                <div class="flip-card-inner">
+                  <div class="flip-card-front">
+                    <img src="{% static 'Politics.jpg' %}"/>
+                  </div>
+                  <div onclick='choose("Politics")' class="flip-card-back Politics">
+                    Politics News
+                  </div>
+                </div>
+            </div>
+            <div class="flip-card">
+                <div class="flip-card-inner">
+                  <div class="flip-card-front">
+                    <img src="{% static 'Technology.jpg' %}"/>
+                  </div>
+                  <div  onclick='choose("Technology")' class="flip-card-back Technology">
+                    Technology News
+                  </div>
+                </div>
+            </div>
+        </div>
+        <div class='btn btn-default' id='button'>
+            <form method="post" action="{% url 'give' user %}">
+                {% csrf_token %}
+                <button type='submit' id='buttonreal' style='font-size:25px;'> 
+                    <div style="padding:5px;">
+                        Continue
+                    </div>
+                </button>
+                <div class='input-group'>
+                    <input style='display:none;' id='sectors' name='sectors'></input>
+                </div>
+            </form>
+        </div>
+    </body>
+</html>

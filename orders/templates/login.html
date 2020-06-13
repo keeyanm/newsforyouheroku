@@ -1,0 +1,292 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script>
+            function showsignup() {
+                document.querySelector('#removeme').style.display = 'none';
+                document.querySelector('#loginacform').style.display = 'none';
+                document.querySelector('#signinacform').style.display = 'block';
+            }
+
+            function showlogin() {
+                document.querySelector('#loginacform').style.display = 'block';
+                document.querySelector('#signinacform').style.display = 'none';
+            }
+
+        </script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"> 
+        <style>
+                        @font-face {
+                font-family: 'Montserrat';
+                font-style: normal;
+                font-weight: 400;
+                src: local('Montserrat Regular'), local('Montserrat-Regular'), url(https://fonts.gstatic.com/s/montserrat/v12/JTUSjIg1_i6t8kCHKm459WRhyzbi.woff2) format('woff2');
+                unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+            }
+            /* cyrillic */
+            @font-face {
+                font-family: 'Montserrat';
+                font-style: normal;
+                font-weight: 400;
+                src: local('Montserrat Regular'), local('Montserrat-Regular'), url(https://fonts.gstatic.com/s/montserrat/v12/JTUSjIg1_i6t8kCHKm459W1hyzbi.woff2) format('woff2');
+                unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+            }
+            /* vietnamese */
+            @font-face {
+                font-family: 'Montserrat';
+                font-style: normal;
+                font-weight: 400;
+                src: local('Montserrat Regular'), local('Montserrat-Regular'), url(https://fonts.gstatic.com/s/montserrat/v12/JTUSjIg1_i6t8kCHKm459WZhyzbi.woff2) format('woff2');
+                unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+            }
+            /* latin-ext */
+            @font-face {
+                font-family: 'Montserrat';
+                font-style: normal;
+                font-weight: 400;
+                src: local('Montserrat Regular'), local('Montserrat-Regular'), url(https://fonts.gstatic.com/s/montserrat/v12/JTUSjIg1_i6t8kCHKm459Wdhyzbi.woff2) format('woff2');
+                unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+            }
+            /* latin */
+            @font-face {
+                font-family: 'Montserrat';
+                font-style: normal;
+                font-weight: 400;
+                src: local('Montserrat Regular'), local('Montserrat-Regular'), url(https://fonts.gstatic.com/s/montserrat/v12/JTUSjIg1_i6t8kCHKm459Wlhyw.woff2) format('woff2');
+                unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+            }
+            html {
+                height: 100%;
+            }
+
+            body {
+                font-family: 'Montserrat';
+                height: 100%;
+            }
+
+            #main {
+                width:100%;
+                height:100%;
+                border: 55px solid gray;
+                background-color: white;
+            }
+
+            @keyframes comeinmessage {
+                from {
+                    font-size: 5px;
+                    opacity: 0;
+                }
+                to  {
+                    font-size: 30px;
+                    opacity: 1;
+                }
+            }
+            h2 {
+                position: absolute;
+                bottom: 150px;
+                right:45%;
+                animation-name: comeinmessage;
+                animation-duration: 5s;
+                animation-fill-mode: forwards;
+                padding: 15px;
+            }
+
+            #sec {
+                width:100%;
+                height:100%;
+                display: flex;
+            }
+            #sec1 {
+                height:80%;
+                width:45%;
+            }
+            #sec2 {
+                padding-top: 20px;
+                height:60%;
+                width:50%;
+            }
+            #loginacform {
+                padding-top: 120px;
+                display: block;
+            }
+
+            #signinacform {
+                height:100%;
+                overflow-y: scroll;
+                padding-top: 75px;
+                display: none;
+            }
+
+            @keyframes comeinimg {
+                from {
+                    opacity: 0;
+                }
+                to  {
+                    opacity: 1;
+                }
+            }
+            #img {
+                padding:100px;
+                padding-left:150px;
+                width:100%;
+                height:100%;
+                animation-name: comeinimg;
+                animation-duration: 5s;
+                animation-fill-mode: forwards;
+            }
+
+            .input-group, .input-group-btn {
+                padding:20px;
+                padding-left: 0px;
+            }
+
+            ul {
+                list-style-type: none;
+                margin: 0;
+                top:100px;
+                position: absolute;
+                padding-top: 0;
+                overflow: hidden;
+                background-color: whitesmoke;
+                width: 240px;
+            }
+
+            li {
+                float: left;
+            }
+
+            li a {
+                display: block;
+                color: white;
+                text-align: center;
+                padding: 14px 16px;
+                text-decoration: none;
+            }
+
+            li a:hover {
+                background-color: lightgray;
+            }
+
+            form, .input-group, .input-group-btn {
+                animation-name: comeinimg;
+                animation-duration: 5s;
+                animation-fill-mode: forwards;
+            }
+
+            input {
+                padding:5px;
+                border-radius: 20px;
+            }
+
+            #nav {
+                z-index:2;
+            }
+
+            .btn {
+                border-radius: 10px;
+                border: 1px solid black;
+            }
+
+            button:hover {
+                background-color: lightgray;
+            }
+
+            @media screen and (max-width: 930px) {
+                #main {
+                    border: 35px solid gray;
+                    border-bottom: 50px solid gray;
+                    border-right: 50px solid gray;
+                }
+                #sec2 {
+                    position: absolute;
+                    top:-30px;
+                    left:16%;
+                }
+                #loginacform {
+                    padding-top:150px;
+                }
+                #signinacform {
+                    padding-top:150px;
+                    height:500px;
+                    width:400px;
+                    
+                }
+                #message {
+                    bottom: 35px;
+                    right:20%;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div id='main'>
+            <div id='sec'>
+                <div id='sec1'>
+                    <img id='img' src="{% static 'loginn.jpg' %}"  alt='hey'/>
+                </div>
+                <div id='sec2'>
+                    <ul id='nav'>
+                        <li><a onclick='showlogin()'>Log In</a></li>
+                        <li><a onclick='showsignup()'>Sign Up</a></li>
+                    </ul>
+                    <form id='loginacform' action="{% url 'login' %}" method="post">
+                        {% csrf_token %}
+                        <h5>Username:</h5>
+                        <div class="input-group">
+                            <input name="username" placeholder="  Username" type="text"/>
+                        </div>
+                        <h5>Password:</h5>
+                        <div class="input-group">
+                            <input name="password" placeholder="  Password" type="password"/>
+                        </div>
+                        <div class='input-group-btn'>
+                            <button id='butt' class="btn btn-default" type="submit">
+                                Log In With Your Existing Account
+                            </button>
+                        </div>
+                    </form>
+                    <div class='input-group-btn'>
+                        <button id='removeme' class="btn btn-default" onclick="showsignup()">
+                            Sign Up for Our Services (Free)
+                        </button>
+                    </div>
+                    <form id='signinacform' action="{% url 'signin' %}" method="post">
+                        {% csrf_token %}
+                        <h5>Username:</h5>
+                        <div class="input-group">
+                            <input name="username" placeholder="Username" type="text"/>
+                        </div>
+                        <h5>Password:</h5>
+                        <div class="input-group">
+                            <input name="password" placeholder="Password" type="password"/>
+                        </div>
+                        <h5>First Name:</h5>
+                        <div class="input-group">
+                            <input name="first-name" placeholder="First Name" type="text"/>
+                        </div>
+                        <h5>Last Name:</h5>
+                        <div class="input-group">
+                            <input name="last-name" placeholder="Last Name" type="text"/>
+                        </div>
+                        <h5>Email Address:</h5>
+                        <div class="input-group">
+                            <input name="email" placeholder="Email Address" type="email"/>
+                        </div>
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" type="submit">
+                                Register Your New Account
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <h2 id='message'>
+                {% if message %}
+                    {{ message }}
+                {% endif %}
+            </h2>
+        </div>
+    </body>
+</html>
