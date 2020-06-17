@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <title>Login or SignUp to NewsForYou</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <script>
             function showsignup() {
@@ -194,6 +195,11 @@
             }
 
             @media screen and (max-width: 930px) {
+                #sec {
+                    position: absolute;
+                    top:30px;
+                    left:0;
+                }
                 #main {
                     border: 35px solid gray;
                     border-bottom: 50px solid gray;
@@ -217,11 +223,32 @@
                     bottom: 35px;
                     right:20%;
                 }
+                #formcovid,#but {
+                    display: none;
+                }
+                @keyframes comeinmessage {
+                from {
+                    font-size: 5px;
+                    opacity: 0;
+                }
+                to  {
+                    font-size: 15px;
+                    opacity: 1;
+                }
+            }
             }
         </style>
     </head>
     <body>
         <div id='main'>
+            <div>
+                <form id='formcovid' action="{% url 'covid'  %}" method="post">
+                    {% csrf_token %}
+                    <div class="input-group-btn">
+                        <button id='but' type='submit'>LIVE COVID-19 Details for All Countries (Don't Need to Log In)</button>
+                    </div>
+                </form>
+            </div>
             <div id='sec'>
                 <div id='sec1'>
                     <img id='img' src="{% static 'loginn.jpg' %}"  alt='hey'/>
