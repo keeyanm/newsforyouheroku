@@ -1263,9 +1263,9 @@
                     font-size: 37px;
                 }
                 #header2 {
-                    display:block;
+                    display:block!important;
                     padding-left: 120px;
-                    font-size: 22px;
+                    font-size: 15px;
                 }
                 .allsearchresults {
                     position: absolute;
@@ -1432,15 +1432,21 @@
                 <div id='header'>
                     Dashboard
                 </div>
-                <div id='header2'>
+                <!-- <div id='header2'>
                     <form action="{% url 'covid'  %}" method="post">
                         {% csrf_token %}
                         <button type='submit'>LIVE COVID-19 Details for All Countries</button>
                     </form>
-                </div>
+                </div> -->
                 <img id='extraimg' src="https://www.desktopbackground.org/download/800x600/2010/10/28/102388_wall-street-journal-wallpapers_1920x1080_h.jpg"/>
                 <div id='news'>
                 </div>
+            </div>
+            <div id='header2'>
+                <form action="{% url 'covid'  %}" method="post">
+                    {% csrf_token %}
+                    <button type='submit'>LIVE COVID-19 Details for All Countries</button>
+                </form>
             </div>
         </div>
     </body>
