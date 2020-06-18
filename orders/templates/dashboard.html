@@ -30,26 +30,29 @@
                     header.innerHTML = p[i];
                     d.style.height = `${x}%`;
                     if (n === '2') {
-                        d.style.width = '50%'
+                        d.style.width = '90%'
                     }
                     else if (n === '3') {
+                        d.style.width = '90%';
                         news.style.width = '108%'
                         news.style.right = '-270px'
                         header.style.left = '20%'
                         document.querySelector('#extraimg').style.right = '90px';
                     }
                     else if (n === '1') {
-                        d.style.height = `100%`;
                         d.style.width = '100%'
                         header.style.left = '40%'
                     }
                     else if (n === '4') {
+                        d.style.width = '90%'
                         header.style.left = '20%'
                     }
                     else if (n === '5') {
+                        d.style.width = '90%'
                         document.querySelector('#extraimg').style.right = '195px';
                     }
                     else if (n === '6') {
+                        d.style.width = '90%'
                     }
                     d.append(header);
                     news.append(d);
@@ -613,6 +616,12 @@
                     // const col = document.querySelector(`${sec}special`);
                     // console.log(col);
                     const newdiv = document.createElement('div');
+                    newdiv.innerHTML = `<div id='header2dash' style='position:absolute;top:-100px;'>
+                            <form action="{% url 'covid'  %}" method="post">
+                                {% csrf_token %}
+                                <button type='submit'>LIVE COVID-19 Details for All Countries</button>
+                            </form>
+                        </div>`
                     for (var i = 0; i < arr.length; i++) {
                         const div1 = document.createElement('div');
                         div1.className = 'article';
@@ -792,7 +801,7 @@
                 text-shadow: 0px 1px, 1px 0px, 1px 1px;
             }
 
-            #header2 {
+            #header2, #header2dash {
                 padding-left: 250px;
                 padding-bottom: 10px;
                 color:#006187;
@@ -800,6 +809,8 @@
                 font-size:22px;
                 text-shadow: 0px 1px, 1px 0px, 1px 1px;
                 text-decoration: underline;
+                z-index: 99!important;
+                display:block!important;
             }
 
             #hu {
@@ -878,7 +889,7 @@
             }
 
             .newsscroll {
-                height: 90%;
+                height: 80%;
                 overflow-y: auto;
             }
             .icon {
@@ -1263,8 +1274,17 @@
                     font-size: 37px;
                 }
                 #header2 {
+                    z-index: 99!important;
                     display:block!important;
                     padding-left: 120px;
+                    font-size: 15px;
+                }
+                #header2dash {
+                    z-index: 99!important;
+                    display:block!important;
+                    left:-245px;
+                    padding-top: 100px;
+                    width:500px;
                     font-size: 15px;
                 }
                 .allsearchresults {
@@ -1300,7 +1320,7 @@
                     left:15%!important;
                 }
                 .column {
-                    height:500px!important;
+                    height:400px!important;
                 }
                 .articleimg {
                     opacity: 0.65;
@@ -1438,22 +1458,22 @@
                 <div id='header'>
                     Dashboard
                 </div>
-                <!-- <div id='header2'>
+                <div id='header2'>
                     <form action="{% url 'covid'  %}" method="post">
                         {% csrf_token %}
                         <button type='submit'>LIVE COVID-19 Details for All Countries</button>
                     </form>
-                </div> -->
+                </div>
                 <img id='extraimg' src="https://www.desktopbackground.org/download/800x600/2010/10/28/102388_wall-street-journal-wallpapers_1920x1080_h.jpg"/>
                 <div id='news'>
                 </div>
             </div>
-            <div id='header2'>
+            <!-- <div id='header2'>
                 <form action="{% url 'covid'  %}" method="post">
                     {% csrf_token %}
                     <button type='submit'>LIVE COVID-19 Details for All Countries</button>
                 </form>
-            </div>
+            </div> -->
         </div>
     </body>
 </html>
