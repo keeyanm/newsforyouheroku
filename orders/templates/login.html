@@ -242,6 +242,51 @@
                     display:none;
                 }
             }
+            @media screen and (max-width: 800px) {
+                #img {
+                    display: none;
+                }
+                #formcovid,#but {
+                    display: none;
+                }
+            }
+            @media screen and (max-width: 1050px) {
+                #img {
+                    height:700px;
+                    width:auto;
+                    padding-left: 50px;
+                }
+                #formcovid,#but {
+                    padding-left: 20px;
+                    width: 300px;
+                }
+            }
+            @media screen and (max-height: 700px) {
+                #nav {
+                    position:absolute;
+                    top:40px;
+                    right:-62px;
+                }
+                #loginacform {
+                    font-size: smaller;
+                    padding-top:100px;
+                }
+                #signinacform {
+                    font-size: smaller;
+                    padding-top:100px;
+                    height:400px;
+                    width:300px;
+                }
+                #butt {
+                    font-size: 10px;
+                }
+                #removeme {
+                    font-size:10px;
+                }
+                #register {
+                    font-size: 10px;
+                }
+            }
         </style>
     </head>
     <body>
@@ -307,7 +352,7 @@
                             <input name="email" placeholder="Email Address" type="email"/>
                         </div>
                         <div class="input-group-btn">
-                            <button class="btn btn-default" type="submit">
+                            <button id='register' class="btn btn-default" type="submit">
                                 Register Your New Account
                             </button>
                         </div>

@@ -566,11 +566,13 @@
                 document.querySelector('#changingsect').innerHTML = '';
                 if (sec === 'Home') {
                     document.querySelector('#dashboard').style.display = 'block';
+                    document.querySelector('#pc').style.display = 'block';
                     document.querySelector('#changingsect').style.display = 'none';
                     document.querySelector('#changingsect').innerHTML = '';
                     return '1';
                 }
                 document.querySelector('#dashboard').style.display = 'none';
+                document.querySelector('#pc').style.display = 'none';
                 const bigdiv = document.createElement('div');
                 bigdiv.id = 'specialisednews';
                 document.querySelector('#changingsect').style.display = 'block';
