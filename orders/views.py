@@ -127,7 +127,12 @@ def signin_view(request):
         user.save()
     except: 
         return render(request, "login.html", {"message": "That Username already Exists."})
-    return render(request, "login.html", {"message": "You can login with your new account."})
+    user = authenticate(request, username=username, password=password)
+    if user is not None:
+        login(request, user)
+        return HttpResponseRedirect(reverse("index"))
+    else:
+        return render(request, "login.html", {"message": "Invalid credentials."})
 
 def give(request, user):
     sectorsl = request.POST["sectors"].split(',')
