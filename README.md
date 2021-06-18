@@ -10,6 +10,7 @@ In short, my NewsForYou Application is a Django app, and allows a multitude of u
 
 The preferences of users are stored in a database, as are the RSS feeds.
 
+This Website is hosted on Heroku
 
 
 
